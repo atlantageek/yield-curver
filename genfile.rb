@@ -31,11 +31,14 @@ end
 puts "STARTING"
 data.each_index do |idx|
   str_list = []
-  str_list <<  "#{idx}"
+  #str_list <<  "#{idx}"
   next if data[idx].nil?
   metric_list.each do |metric|
     str_list << data[idx][metric].to_s
   end
-  next if (str_list[2].to_i == 0) && (str_list[3].to_i == 0)
-  puts str_list.join(',')
+  if (str_list[2].to_i == 0) && (str_list[3].to_i == 0)
+	puts ",,,,,,"
+  else
+  	puts str_list.join(',')
+  end
 end
