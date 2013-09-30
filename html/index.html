@@ -25,14 +25,9 @@
 
 	function AppViewModel() {
 		var time_list = [0,1000,500,250, 125, 75,50];
-		this.index = ko.observable(0);
 		this.speed = ko.observable(1);
+		this.yield_date = ko.observable("");
 
-		this.yield_date = ko.computed(function() {
-			var dt =  new Date(1982,0,4);
-			dt.setDate( dt.getDate() + (this.index()));
-			return (dt );
-		},this);
 		this.backward = function() {
 			var curr = this.speed();
 			if (curr > -6) { this.speed(curr - 1);}
@@ -58,9 +53,10 @@
 
 		var d1 = []
 		
-		for (var i = 1; i < data[0].length; i += 1) { #skip the first value
+		for (var i = 1; i < data[0].length; i += 1) { //#skip the first value
 			d1.push([i, data[start_val][i] * 1.0 / 100.0]);
 		}
+		avm.yield_date(data[0][0]);
 
 
 
@@ -93,10 +89,10 @@
 		if (start_val >= data.length) {start_val = data.length - 1;}
 		var d1 = [];
 		if (data[start_val] == null){ return }
-		for (var i = 0; i < data[0].length; i += 1) {
+		avm.yield_date(data[start_val][0]);
+		for (var i = 1; i < data[0].length; i += 1) {
 			d1.push([i, data[start_val][i] * 1.0 / 100.0]);
 		}
-		avm.index(start_val);
 		yield_curve.setData([{data:d1}]);
 		yield_curve.draw()
 	}
