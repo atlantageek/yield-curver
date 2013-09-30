@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Curve</title>
+    <title>Animated Yield Curve</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
     <link href="flot_support_files/examples.css" rel="stylesheet" type="text/css">
@@ -25,13 +25,19 @@
 
 	function AppViewModel() {
 		var time_list = [0,1000,500,250, 125, 75,50];
+		var phrase_list= ["Paused","1 week/second","2 weeks/second","4 weeks/second", "8 weeks/second", "13 weeks/second","20 weeks/second"];
 		this.speed = ko.observable(1);
 		this.yield_date = ko.observable("");
+		this.anim_speed = ko.observable("1 week/second");
 
 		this.backward = function() {
 			var curr = this.speed();
 			if (curr > -6) { this.speed(curr - 1);}
 			clearInterval(tmr);
+			var phrase = phrase_list[Math.abs(this.speed())]
+			if (this.speed() < 0) {phrase = phrase + " back in time."}
+			this.anim_speed(phrase);
+			
 		        tmr = setInterval(updateCurve, time_list[Math.abs(this.speed())]);
 		}
 		this.forward = function() {
@@ -39,11 +45,16 @@
 			if (curr < 6) { this.speed(curr + 1);}
 			clearInterval(tmr);
 		        tmr = setInterval(updateCurve, time_list[Math.abs(this.speed())]);
+
+			var phrase = phrase_list[Math.abs(this.speed())]
+			if (this.speed() < 0) {phrase = phrase + " back in time"}
+			this.anim_speed(phrase);
 		}
 		this.stopit = function() {
 			this.speed(0);
 			clearInterval(tmr);
 		        tmr = setInterval(updateCurve, time_list[0]);
+			this.anim_speed("Paused");
 		}
 
 			
@@ -85,8 +96,8 @@
 	{	
 		if (avm.speed() < 0) {start_val--;}
 		else if (avm.speed() > 0) {start_val++;}
-		if (start_val < 0) {start_val = 0;}
-		if (start_val >= data.length) {start_val = data.length - 1;}
+		if (start_val < 0) {start_val = 0;avm.speed(0);}
+		if (start_val >= data.length) {start_val = data.length - 1;avm.speed(0);}
 		var d1 = [];
 		if (data[start_val] == null){ return }
 		avm.yield_date(data[start_val][0]);
@@ -94,9 +105,8 @@
 			d1.push([i, data[start_val][i] * 1.0 / 100.0]);
 		}
 		yield_curve.setData([{data:d1}]);
-		yield_curve.draw()
+		yield_curve.draw();
 	}
-
 	</script>
   </head>
 
@@ -106,7 +116,7 @@
 <body>
   <div class="container">
       <div class="page-header">
-        <h1>Interest Rate Curve</h1>
+        <h1>Yield Curve</h1>
         <p class="lead">See how the rate curve has changed over time.</p>
       </div>
       	<div class="row">
@@ -132,7 +142,7 @@
 		<button type="button" data-bind="click: forward" class="btn btn-default btn-lg">
   			<span class="glyphicon glyphicon-forward"></span> Faster
 		</button>
-		<strong data-bind="text: speed"></strong>
+		<strong data-bind="text: anim_speed"></strong>
         	</div>
         	<div class="col-md-2">&nbsp;</div>
 
