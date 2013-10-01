@@ -59,6 +59,27 @@
 
 			
 	};
+        function get_slope(dataset)
+        {
+                var y_total=0;
+                var y_avg=0;
+                var len = dataset.length - 1;
+                var x_avg=(len+ 1)/2;
+                var x_squared_total = len  * (len + 1) * (2 * len + 1)/6;
+                var xy_total = 0;
+                var i=0;
+                for (var i = 1; i<dataset.length;i++)
+                {
+                        xy_total += i * dataset[i] ;
+                        y_total += dataset[i]
+                }
+                y_avg = y_total / len;
+                var slope = (xy_total  - len * x_avg * y_avg) /
+                        (x_squared_total -len * x_avg * x_avg);
+                return slope;
+        }
+
+
 
 	$(function() {
 
